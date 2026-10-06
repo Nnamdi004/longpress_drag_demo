@@ -42,4 +42,4 @@ while the user is dragging.
 
 ## Screenshot
 
-![Final UI](screenshots/final_ui.png)
+![Final UI](lib/screenshots/final_ui.png)
