@@ -21,8 +21,26 @@ class LongPressDragDemo extends StatelessWidget {
   }
 }
 
-class DragDemoPage extends StatelessWidget {
+class DragDemoPage extends StatefulWidget {
   const DragDemoPage({super.key});
+
+  @override
+  State<DragDemoPage> createState() => _DragDemoPageState();
+}
+
+class _DragDemoPageState extends State<DragDemoPage> {
+  bool isDropped = false;
+
+  String message =
+      'Long-press the card and drag it to the drop area.';
+
+  void resetDemo() {
+    setState(() {
+      isDropped = false;
+      message =
+          'Long-press the card and drag it to the drop area.';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +50,7 @@ class DragDemoPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -55,22 +73,22 @@ class DragDemoPage extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              const Text(
-                'Press and hold the card to drag it.',
+              Text(
+                message,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 35),
 
+              // DRAGGABLE CARD
               LongPressDraggable<String>(
                 // PROPERTY 1: DATA
-                // This is the information carried by the draggable.
                 data: 'purple_card',
 
                 // PROPERTY 2: FEEDBACK
-                // This is what appears under the user's finger
-                // while the card is being dragged.
                 feedback: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -100,8 +118,6 @@ class DragDemoPage extends StatelessWidget {
                 ),
 
                 // PROPERTY 3: CHILDWHENDRAGGING
-                // This replaces the normal child at its original
-                // position while the drag is happening.
                 childWhenDragging: Container(
                   width: 180,
                   height: 110,
@@ -124,7 +140,7 @@ class DragDemoPage extends StatelessWidget {
                   ),
                 ),
 
-                // Normal appearance before and after dragging.
+                // NORMAL CHILD
                 child: Container(
                   width: 180,
                   height: 110,
@@ -162,14 +178,96 @@ class DragDemoPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 45),
 
               const Text(
-                'Long press the card to see the drag feedback.',
-                textAlign: TextAlign.center,
+                'Drop Zone',
                 style: TextStyle(
-                  color: Colors.grey,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // DROP TARGET
+              DragTarget<String>(
+                onWillAcceptWithDetails: (details) {
+                  return details.data == 'purple_card';
+                },
+                onAcceptWithDetails: (details) {
+                  setState(() {
+                    isDropped = true;
+                    message =
+                        'Success! The DragTarget received the data.';
+                  });
+                },
+                builder: (
+                  context,
+                  candidateData,
+                  rejectedData,
+                ) {
+                  final bool isHovering =
+                      candidateData.isNotEmpty;
+
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 240,
+                    height: 140,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isDropped
+                          ? Colors.green.shade100
+                          : isHovering
+                              ? Colors.orange.shade100
+                              : Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDropped
+                            ? Colors.green
+                            : isHovering
+                                ? Colors.orange
+                                : Colors.grey,
+                        width: 3,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isDropped
+                              ? Icons.check_circle
+                              : Icons.move_to_inbox,
+                          size: 42,
+                          color: isDropped
+                              ? Colors.green
+                              : Colors.deepPurple,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isDropped
+                              ? 'Card Accepted!'
+                              : isHovering
+                                  ? 'Release Here'
+                                  : 'Drop Here',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(height: 25),
+
+              OutlinedButton.icon(
+                onPressed: resetDemo,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reset Demo'),
               ),
             ],
           ),
