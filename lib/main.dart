@@ -64,20 +64,30 @@ class DragDemoPage extends StatelessWidget {
               const SizedBox(height: 40),
 
               LongPressDraggable<String>(
+                // Data carried by the draggable.
+                data: 'purple_card',
+
                 // Required by LongPressDraggable.
-                // We will improve this in Commit 3.
+                // This will be improved in Commit 3.
                 feedback: const SizedBox(
                   width: 160,
                   height: 100,
                 ),
 
                 child: Container(
-                  width: 160,
-                  height: 100,
+                  width: 180,
+                  height: 110,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.deepPurple,
                     borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -85,19 +95,29 @@ class DragDemoPage extends StatelessWidget {
                       Icon(
                         Icons.pan_tool,
                         color: Colors.white,
-                        size: 30,
+                        size: 32,
                       ),
-                      SizedBox(height: 6),
+                      SizedBox(height: 8),
                       Text(
                         'Hold and Drag',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const Text(
+                'Long press the card to begin dragging.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
                 ),
               ),
             ],
